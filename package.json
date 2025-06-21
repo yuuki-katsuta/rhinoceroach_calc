@@ -3,13 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "test": "vitest",
     "test:ui": "vitest --ui",
     "coverage": "vitest run --coverage",
     "lint": "biome lint --write .",
+    "lint:fix": "biome lint --write --unsafe .",
     "format": "biome format .",
     "check": "biome check --write .",
     "tsc": "npx tsc --noEmit"
