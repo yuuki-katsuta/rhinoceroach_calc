@@ -1,5 +1,4 @@
 import { Calculator } from "@/app/(calculator)/_components/Calculator";
-import { Hint } from "@/app/(calculator)/_components/Hint";
 
 export default function Home() {
   return (
@@ -9,7 +8,6 @@ export default function Home() {
         <p className="text-gray-600">最大ダメージ計算ツール</p>
       </header>
       <Calculator />
-      <Hint />
     </>
   );
 }

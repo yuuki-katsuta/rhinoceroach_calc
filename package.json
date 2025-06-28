@@ -10,8 +10,9 @@
     "test:ui": "vitest --ui",
     "coverage": "vitest run --coverage",
     "lint": "biome lint --write .",
-    "format": "biome format .",
     "lint:fix": "biome lint --write --unsafe .",
+    "format": "biome format .",
+    "format:fix": "biome format --write  .",
     "check": "biome check --write .",
     "tsc": "npx tsc --noEmit"
   },

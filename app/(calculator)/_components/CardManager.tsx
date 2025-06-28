@@ -3,7 +3,7 @@ import type { CardCounts } from "@/app/(calculator)/_types/card";
 
 interface Props {
   cards: CardCounts;
-  onChange: (card: CardCounts) => void;
+  onChange: (card: Partial<CardCounts>) => void;
 }
 
 export const CardManager = ({ cards, onChange }: Props) => {
@@ -11,7 +11,7 @@ export const CardManager = ({ cards, onChange }: Props) => {
     const info = CARD_INFO.find((c) => c.key === key);
     const maxValue = info?.max ?? 0;
     const newValue = Math.max(0, Math.min(maxValue, value));
-    onChange({ ...cards, [key]: newValue });
+    onChange({ [key]: newValue });
   };
 
   return (
@@ -35,9 +35,7 @@ export const CardManager = ({ cards, onChange }: Props) => {
                 >
                   -
                 </button>
-                <span className="w-8 text-center font-bold text-gray-800">
-                  {cards[card.key]}
-                </span>
+                <span className="w-8 text-center font-bold text-gray-800">{cards[card.key]}</span>
                 <button
                   type="button"
                   onClick={() => updateCard(card.key, cards[card.key] + 1)}

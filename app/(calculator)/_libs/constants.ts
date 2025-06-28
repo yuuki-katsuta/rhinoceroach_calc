@@ -9,12 +9,14 @@ export const INITIAL_CARD_COUNTS = {
   oneCostBounce: 0,
 } as const satisfies CardCounts;
 
+export const RHINO_COST = 2;
+
 export const CARD_INFO = [
   {
     key: "rhinoceroach",
     name: "リノセウス",
     max: 10,
-    cost: 1,
+    cost: RHINO_COST,
   },
   {
     key: "zeroCostCard",
