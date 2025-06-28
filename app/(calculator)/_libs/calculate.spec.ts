@@ -2,34 +2,6 @@ import { calculateOptimalPlay } from "@/app/(calculator)/_libs/calculate";
 import type { CardCounts } from "@/app/(calculator)/_types/card";
 
 describe("calculateOptimalPlay", () => {
-  test("ユーザーが指摘した例: PP7、リノセウス3枚、0コスト1枚、1コストバウンス1枚", () => {
-    const cards: CardCounts = {
-      rhinoceroach: 3,
-      zeroCostCard: 1,
-      oneCostCard: 0,
-      twoCostCard: 0,
-      zeroCostBounce: 0,
-      oneCostBounce: 1,
-    };
-
-    const result = calculateOptimalPlay(cards, 7, 0);
-
-    // 最適解（0コストカードをバウンス利用）:
-    // 1. 0コストカード (プレイ回数1)
-    // 2. 1コストバウンス → 0コストカード (プレイ回数2)
-    // 3. 0コストカード (プレイ回数3)
-    // 4. リノセウス (ダメージ4) - PP2消費
-    // 5. リノセウス (ダメージ5) - PP2消費
-    // 6. リノセウス (ダメージ6) - PP2消費
-    // 合計PP: 0 + 1 + 0 + 2 + 2 + 2 = 7
-    // 合計ダメージ: 4 + 5 + 6 = 15
-
-    expect(result.damage).toBe(15);
-    expect(result.ppUsed).toBe(7);
-    expect(result.sequence.length).toBe(6);
-    expect(result.cardsUsed.rhinoceroach).toBe(3);
-  });
-
   test("PP不足の場合", () => {
     const cards: CardCounts = {
       rhinoceroach: 3,
@@ -101,7 +73,35 @@ describe("calculateOptimalPlay", () => {
     expect(result.damage).toBe(6);
   });
 
-  test("ユーザー指摘のケース: PP8、リノセウス3、0コストカード2、1コストバウンス2", () => {
+  test("例: PP7、リノセウス3枚、0コスト1枚、1コストバウンス1枚", () => {
+    const cards: CardCounts = {
+      rhinoceroach: 3,
+      zeroCostCard: 1,
+      oneCostCard: 0,
+      twoCostCard: 0,
+      zeroCostBounce: 0,
+      oneCostBounce: 1,
+    };
+
+    const result = calculateOptimalPlay(cards, 7, 0);
+
+    // 最適解（0コストカードをバウンス利用）:
+    // 1. 0コストカード (プレイ回数1)
+    // 2. 1コストバウンス → 0コストカード (プレイ回数2)
+    // 3. 0コストカード (プレイ回数3)
+    // 4. リノセウス (ダメージ4) - PP2消費
+    // 5. リノセウス (ダメージ5) - PP2消費
+    // 6. リノセウス (ダメージ6) - PP2消費
+    // 合計PP: 0 + 1 + 0 + 2 + 2 + 2 = 7
+    // 合計ダメージ: 4 + 5 + 6 = 15
+
+    expect(result.damage).toBe(15);
+    expect(result.ppUsed).toBe(7);
+    expect(result.sequence.length).toBe(6);
+    expect(result.cardsUsed.rhinoceroach).toBe(3);
+  });
+
+  test("例: PP8、リノセウス3枚、0コストカード2枚、1コストバウンス2枚", () => {
     const cards: CardCounts = {
       rhinoceroach: 3,
       zeroCostCard: 2,
@@ -129,5 +129,32 @@ describe("calculateOptimalPlay", () => {
     expect(result.damage).toBe(24);
     expect(result.ppUsed).toBe(8);
     expect(result.sequence.length).toBe(9);
+  });
+
+  test("例: PP5、リノセウス2枚、0コストカード2枚、1コストバウンス1枚", () => {
+    const cards: CardCounts = {
+      rhinoceroach: 2,
+      zeroCostCard: 2,
+      oneCostCard: 0,
+      twoCostCard: 0,
+      zeroCostBounce: 0,
+      oneCostBounce: 1,
+    };
+
+    const result = calculateOptimalPlay(cards, 5, 0);
+
+    // 最適解:
+    // 1. 0コストカード (プレイ回数1)
+    // 2. 0コストカード (プレイ回数2)
+    // 3. 1コストバウンス → 0コストカード (プレイ回数3)
+    // 4. 0コストカード (プレイ回数4)
+    // 5. リノセウス (1 + 5 = 5ダメージ) (プレイ回数5)
+    // 6. リノセウス (1 + 6 = 6ダメージ) (プレイ回数6)
+    // 合計ダメージ: 5 + 6 = 11
+    // 合計PP: 0 + 0 + 1 + 0 + 2 + 2 = 5
+
+    expect(result.damage).toBe(11);
+    expect(result.ppUsed).toBe(5);
+    expect(result.sequence.length).toBe(6);
   });
 });
