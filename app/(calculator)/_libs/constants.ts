@@ -9,6 +9,15 @@ export const INITIAL_CARD_COUNTS = {
   oneCostBounce: 0,
 } as const satisfies CardCounts;
 
+export const CARD_COSTS = {
+  rhinoceroach: 2,
+  zeroCostCard: 0,
+  oneCostCard: 1,
+  twoCostCard: 2,
+  zeroCostBounce: 0,
+  oneCostBounce: 1,
+} as const satisfies Record<keyof CardCounts, number>;
+
 export const RHINO_COST = 2;
 
 export const CARD_INFO = [

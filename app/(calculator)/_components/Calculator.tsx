@@ -13,7 +13,7 @@ export const Calculator = () => {
   const [cards, setCards] = useState<CardCounts>(INITIAL_CARD_COUNTS);
 
   const optimal = calculateOptimalPlay(cards, currentPP, currentPlayCount);
-  const isLethal = false;
+  const isLethal = optimal.damage >= opponentHp;
 
   const handleChangeCard = (card: Partial<CardCounts>) => {
     setCards((prev) => ({ ...prev, ...card }));
@@ -160,11 +160,11 @@ export const Calculator = () => {
               <div className="rounded-lg bg-gray-50 p-4">
                 <ol className="space-y-2">
                   {optimal.sequence.map((step, index) => (
-                    <li key={`step-${index}-${step}`} className="flex items-start">
+                    <li key={`step-${index}-${step.description}`} className="flex items-start">
                       <span className="mr-3 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-blue-500 font-bold text-sm text-white">
                         {index + 1}
                       </span>
-                      <span className="pt-1 text-gray-700">{step}</span>
+                      <span className="pt-1 text-gray-700">{step.description}</span>
                     </li>
                   ))}
                 </ol>
