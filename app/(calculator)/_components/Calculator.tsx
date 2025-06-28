@@ -24,9 +24,8 @@ export const Calculator = () => {
       <div className="rounded-lg bg-white p-6 shadow-md">
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           <div className="lg:col-span-2">
-            <div>CardManager</div>
+            <CardManager cards={cards} onChange={handleChangeCard} />
           </div>
-          <CardManager cards={cards} onChange={handleChangeCard} />
 
           <div className="space-y-4">
             <div>
