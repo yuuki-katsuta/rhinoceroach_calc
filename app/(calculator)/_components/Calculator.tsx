@@ -19,7 +19,7 @@ export const Calculator = () => {
   const optimal = calculateOptimalPlay(cards, currentPP, currentPlayCount);
   const isLethal = optimal.damage >= opponentHp;
 
-  const handleChangeCurrenHp = (value: number) => {
+  const handleChangeCurrentPP = (value: number) => {
     setCurrentPP(value);
   };
 
@@ -50,7 +50,7 @@ export const Calculator = () => {
               currentPP={currentPP}
               currentPlayCount={currentPlayCount}
               opponentHp={opponentHp}
-              onChangeCurrentHp={handleChangeCurrenHp}
+              onChangeCurrentPP={handleChangeCurrentPP}
               onChangePlayCount={handleChangePlayCount}
               onChangeOpponentHp={handleChangeOpponentHp}
             />

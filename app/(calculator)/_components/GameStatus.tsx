@@ -2,7 +2,7 @@ interface Props {
   currentPP: number;
   currentPlayCount: number;
   opponentHp: number;
-  onChangeCurrentHp: (value: number) => void;
+  onChangeCurrentPP: (value: number) => void;
   onChangePlayCount: (value: number) => void;
   onChangeOpponentHp: (value: number) => void;
 }
@@ -11,7 +11,7 @@ export const GameStatus = ({
   currentPP,
   currentPlayCount,
   opponentHp,
-  onChangeCurrentHp,
+  onChangeCurrentPP,
   onChangePlayCount,
   onChangeOpponentHp,
 }: Props) => {
@@ -28,7 +28,7 @@ export const GameStatus = ({
           max="10"
           value={currentPP}
           onChange={(e) => {
-            onChangeCurrentHp(Number.parseInt(e.target.value, 10));
+            onChangeCurrentPP(Number.parseInt(e.target.value, 10));
           }}
           className="w-full rounded-md border border-gray-300 p-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
