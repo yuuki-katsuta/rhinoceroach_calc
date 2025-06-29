@@ -1,4 +1,4 @@
-import { CARD_COSTS } from "@/app/(calculator)/_libs/constants";
+import { CARD_COSTS, MAX_BOUNCE_PER_CARD, MAX_PLAY_COUNT } from "@/app/(calculator)/_libs/constants";
 import type { CardCounts } from "@/app/(calculator)/_types/card";
 import type { Action, GameState, OptimalResult } from "@/app/(calculator)/_types/game";
 
@@ -8,6 +8,7 @@ const cloneState = (state: GameState): GameState => {
     hand: { ...state.hand },
     playedCards: { ...state.playedCards },
     sequence: [...state.sequence],
+    bounceCount: new Map(state.bounceCount),
   };
 };
 
@@ -37,24 +38,34 @@ const getAvailableActions = (state: GameState): Action[] => {
     if (state.hand.zeroCostBounce > 0 && state.pp >= 0) {
       for (const targetCard of bounceableCards) {
         if (state.playedCards[targetCard] > 0) {
-          actions.push({
-            type: "bounce",
-            card: "zeroCostBounce",
-            targetCard,
-            description: `0コストバウンス → ${getCardName(targetCard)}`,
-          });
+          // バウンス回数制限をチェック
+          const bounceKey = `${targetCard}`;
+          const currentBounceCount = state.bounceCount.get(bounceKey) || 0;
+          if (currentBounceCount < MAX_BOUNCE_PER_CARD) {
+            actions.push({
+              type: "bounce",
+              card: "zeroCostBounce",
+              targetCard,
+              description: `0コストバウンス → ${getCardName(targetCard)}`,
+            });
+          }
         }
       }
     }
     if (state.hand.oneCostBounce > 0 && state.pp >= 1) {
       for (const targetCard of bounceableCards) {
         if (state.playedCards[targetCard] > 0) {
-          actions.push({
-            type: "bounce",
-            card: "oneCostBounce",
-            targetCard,
-            description: `1コストバウンス → ${getCardName(targetCard)}`,
-          });
+          // バウンス回数制限をチェック
+          const bounceKey = `${targetCard}`;
+          const currentBounceCount = state.bounceCount.get(bounceKey) || 0;
+          if (currentBounceCount < MAX_BOUNCE_PER_CARD) {
+            actions.push({
+              type: "bounce",
+              card: "oneCostBounce",
+              targetCard,
+              description: `1コストバウンス → ${getCardName(targetCard)}`,
+            });
+          }
         }
       }
     }
@@ -106,10 +117,46 @@ const applyAction = (state: GameState, action: Action): GameState => {
     newState.hand[action.card]--;
     newState.playedCards[targetCard]--;
     newState.hand[targetCard]++;
+
+    // バウンス回数を更新
+    const bounceKey = `${targetCard}`;
+    const currentCount = newState.bounceCount.get(bounceKey) || 0;
+    newState.bounceCount.set(bounceKey, currentCount + 1);
+
     newState.sequence.push(action);
   }
 
   return newState;
+};
+
+// メモ化キー生成関数
+const generateMemoKey = (state: GameState): string => {
+  // 数値の配列として表現
+  const values = [
+    state.pp,
+    state.playCount,
+    // hand
+    state.hand.rhinoceroach,
+    state.hand.zeroCostCard,
+    state.hand.oneCostCard,
+    state.hand.twoCostCard,
+    state.hand.zeroCostBounce,
+    state.hand.oneCostBounce,
+    // playedCards
+    state.playedCards.rhinoceroach,
+    state.playedCards.zeroCostCard,
+    state.playedCards.oneCostCard,
+    state.playedCards.twoCostCard,
+    state.playedCards.zeroCostBounce,
+    state.playedCards.oneCostBounce,
+  ];
+
+  // バウンス回数も含める（ソートして順序を固定）
+  const bounceEntries = Array.from(state.bounceCount.entries())
+    .sort(([a], [b]) => a.localeCompare(b))
+    .flat();
+
+  return `${values.join(",")}|${bounceEntries.join(",")}`;
 };
 
 const search = (state: GameState, memo: Map<string, number>, depth = 0): GameState => {
@@ -118,13 +165,13 @@ const search = (state: GameState, memo: Map<string, number>, depth = 0): GameSta
     return state;
   }
 
+  // プレイ回数制限
+  if (state.playCount >= MAX_PLAY_COUNT) {
+    return state;
+  }
+
   // メモ化のキーを生成（現在のゲーム状態）
-  const key = JSON.stringify({
-    pp: state.pp,
-    playCount: state.playCount,
-    hand: state.hand,
-    playedCards: state.playedCards,
-  });
+  const key = generateMemoKey(state);
 
   // このゲーム状態での最大ダメージが既に計算されているか確認
   if (memo.has(key)) {
@@ -177,6 +224,7 @@ export const calculateOptimalPlay = (cards: CardCounts, maxPP: number, currentPl
     },
     sequence: [],
     damage: 0,
+    bounceCount: new Map(),
   };
 
   const memo = new Map<string, number>();

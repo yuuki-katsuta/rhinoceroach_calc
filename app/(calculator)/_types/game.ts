@@ -7,6 +7,7 @@ export interface GameState {
   playedCards: CardCounts; // 場にあるカード（バウンス可能）
   sequence: Action[];
   damage: number;
+  bounceCount: Map<string, number>; // 各カードへのバウンス回数を追跡
 }
 
 export type ActionType = "play" | "bounce";

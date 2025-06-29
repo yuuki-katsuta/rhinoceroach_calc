@@ -48,7 +48,7 @@ export const CARD_INFO = [
   {
     key: "zeroCostBounce",
     name: "0コストバウンス",
-    max: 10,
+    max: 3,
     cost: 0,
   },
   {
@@ -58,3 +58,7 @@ export const CARD_INFO = [
     cost: 1,
   },
 ] as const satisfies Card[];
+
+// パフォーマンス改善のための制限
+export const MAX_PLAY_COUNT = 30; // 最大プレイ回数
+export const MAX_BOUNCE_PER_CARD = 3; // 各カードへの最大バウンス回数
