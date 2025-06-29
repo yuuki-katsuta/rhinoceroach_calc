@@ -8,7 +8,7 @@ import { GameStatus } from "@/app/(calculator)/_components/GameStatus";
 import { calculateOptimalPlay } from "@/app/(calculator)/_libs/calculate";
 import { INITIAL_CARD_COUNTS } from "@/app/(calculator)/_libs/constants";
 import type { CardCounts } from "@/app/(calculator)/_types/card";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 export const Calculator = () => {
   const [currentPP, setCurrentPP] = useState(10);
@@ -16,7 +16,10 @@ export const Calculator = () => {
   const [opponentHp, setOpponentHp] = useState(20);
   const [cards, setCards] = useState<CardCounts>(INITIAL_CARD_COUNTS);
 
-  const optimal = calculateOptimalPlay(cards, currentPP, currentPlayCount);
+  const optimal = useMemo(
+    () => calculateOptimalPlay(cards, currentPP, currentPlayCount),
+    [cards, currentPP, currentPlayCount],
+  );
   const isLethal = optimal.damage >= opponentHp;
 
   const handleChangeCurrentPP = (value: number) => {
