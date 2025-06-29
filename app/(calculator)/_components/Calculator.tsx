@@ -4,6 +4,7 @@ import { CalculationResult } from "@/app/(calculator)/_components/CalculationRes
 import { CardBreakdown } from "@/app/(calculator)/_components/CardBreakdown";
 import { CardManager } from "@/app/(calculator)/_components/CardManager";
 import { CardPlaySequence } from "@/app/(calculator)/_components/CardPlaySequence";
+import { GameStatus } from "@/app/(calculator)/_components/GameStatus";
 import { calculateOptimalPlay } from "@/app/(calculator)/_libs/calculate";
 import { INITIAL_CARD_COUNTS } from "@/app/(calculator)/_libs/constants";
 import type { CardCounts } from "@/app/(calculator)/_types/card";
@@ -18,6 +19,18 @@ export const Calculator = () => {
   const optimal = calculateOptimalPlay(cards, currentPP, currentPlayCount);
   const isLethal = optimal.damage >= opponentHp;
 
+  const handleChangeCurrenHp = (value: number) => {
+    setCurrentPP(value);
+  };
+
+  const handleChangePlayCount = (value: number) => {
+    setCurrentPlayCount(value);
+  };
+
+  const handleChangeOpponentHp = (value: number) => {
+    setOpponentHp(value);
+  };
+
   const handleChangeCard = (card: Partial<CardCounts>) => {
     setCards((prev) => ({ ...prev, ...card }));
   };
@@ -27,60 +40,20 @@ export const Calculator = () => {
       <div className="rounded-lg bg-white p-6 shadow-md">
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           <div className="lg:col-span-2">
+            {/* 手札カード管理 */}
             <CardManager cards={cards} onChange={handleChangeCard} />
           </div>
 
           <div className="space-y-4">
-            <div>
-              <label htmlFor="pp" className="mb-1 block font-medium text-gray-700 text-sm">
-                現在のPP
-              </label>
-              <input
-                name="pp"
-                type="number"
-                min="1"
-                max="10"
-                value={currentPP}
-                onChange={(e) => {
-                  setCurrentPP(Number.parseInt(e.target.value, 10));
-                }}
-                className="w-full rounded-md border border-gray-300 p-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-
-            <div>
-              <label htmlFor="play-count" className="mb-1 block font-medium text-gray-700 text-sm">
-                現在のプレイ回数
-              </label>
-              <input
-                name="play-count"
-                type="number"
-                min="1"
-                max="10"
-                value={currentPlayCount}
-                onChange={(e) => {
-                  setCurrentPlayCount(Number.parseInt(e.target.value, 10));
-                }}
-                className="w-full rounded-md border border-gray-300 p-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-
-            <div>
-              <label htmlFor="hp" className="mb-1 block font-medium text-gray-700 text-sm">
-                相手のHP
-              </label>
-              <input
-                name="hp"
-                type="number"
-                min="1"
-                max="20"
-                value={opponentHp}
-                onChange={(e) => {
-                  setOpponentHp(Number.parseInt(e.target.value, 10));
-                }}
-                className="w-full rounded-md border border-gray-300 p-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
+            {/* ゲーム情報 */}
+            <GameStatus
+              currentPP={currentPP}
+              currentPlayCount={currentPlayCount}
+              opponentHp={opponentHp}
+              onChangeCurrentHp={handleChangeCurrenHp}
+              onChangePlayCount={handleChangePlayCount}
+              onChangeOpponentHp={handleChangeOpponentHp}
+            />
           </div>
         </div>
       </div>
