@@ -30,7 +30,7 @@ export const CardManager = ({ cards, onChange }: Props) => {
                 <button
                   type="button"
                   onClick={() => updateCard(card.key, cards[card.key] - 1)}
-                  className="h-8 w-8 rounded-md bg-red-500 font-bold text-lg text-white transition-colors hover:bg-red-600"
+                  className="h-8 w-8 rounded-md bg-red-400 font-bold text-lg text-white transition-colors hover:bg-red-500"
                   disabled={cards[card.key] === 0}
                 >
                   -
@@ -39,7 +39,7 @@ export const CardManager = ({ cards, onChange }: Props) => {
                 <button
                   type="button"
                   onClick={() => updateCard(card.key, cards[card.key] + 1)}
-                  className="h-8 w-8 rounded-md bg-green-500 font-bold text-lg text-white transition-colors hover:bg-green-600"
+                  className="h-8 w-8 rounded-md bg-green-400 font-bold text-lg text-white transition-colors hover:bg-green-500"
                   disabled={cards[card.key] === card.max}
                 >
                   +

@@ -5,7 +5,7 @@ export default function Home() {
     <>
       <header className="text-center">
         <h1 className="mb-4 font-bold text-3xl">リノ算</h1>
-        <p className="text-gray-600">最大ダメージ計算ツール</p>
+        <p className="text-gray-600">ダメージ計算ツール</p>
       </header>
       <Calculator />
     </>

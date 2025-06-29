@@ -7,7 +7,7 @@ interface Props {
 export const CardPlaySequence = ({ sequence }: Props) => {
   return (
     <div>
-      <h3 className="mb-4 font-bold text-gray-800 text-xl">プレイ順序</h3>
+      <h3 className="mb-4 font-bold text-gray-800 text-lg">プレイ順序</h3>
 
       {sequence.length > 0 ? (
         <div className="rounded-lg bg-gray-50 p-4">
