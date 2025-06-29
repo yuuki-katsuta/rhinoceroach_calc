@@ -73,7 +73,7 @@ export const Calculator = () => {
                 name="hp"
                 type="number"
                 min="1"
-                max="10"
+                max="20"
                 value={opponentHp}
                 onChange={(e) => {
                   setOpponentHp(Number.parseInt(e.target.value, 10));
