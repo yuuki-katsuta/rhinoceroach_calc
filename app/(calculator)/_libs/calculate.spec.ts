@@ -162,11 +162,11 @@ describe("calculateOptimalPlay", () => {
     describe("基本ケース: リノセウスのみ", () => {
       test.each`
         rhinos | maxPP | expectedDamage | description
-        ${1}   | ${2}  | ${1}          | ${"リノセウス1枚、PP2"}
-        ${2}   | ${4}  | ${3}          | ${"リノセウス2枚、PP4"}
-        ${3}   | ${6}  | ${6}          | ${"リノセウス3枚、PP6"}
-        ${3}   | ${4}  | ${3}          | ${"リノセウス3枚、PP不足(4)"}
-        ${1}   | ${0}  | ${0}          | ${"PP0では何もできない"}
+        ${1}   | ${2}  | ${1}           | ${"リノセウス1枚、PP2"}
+        ${2}   | ${4}  | ${3}           | ${"リノセウス2枚、PP4"}
+        ${3}   | ${6}  | ${6}           | ${"リノセウス3枚、PP6"}
+        ${3}   | ${4}  | ${3}           | ${"リノセウス3枚、PP不足(4)"}
+        ${1}   | ${0}  | ${0}           | ${"PP0では何もできない"}
       `("$description", ({ rhinos, maxPP, expectedDamage }) => {
         const cards: CardCounts = {
           rhinoceroach: rhinos,
@@ -185,10 +185,10 @@ describe("calculateOptimalPlay", () => {
     describe("0コストカードとリノセウスの組み合わせ", () => {
       test.each`
         rhinos | zeroCost | maxPP | expectedDamage | description
-        ${1}   | ${1}     | ${2}  | ${2}          | ${"0コスト1枚 + リノセウス1枚"}
-        ${2}   | ${1}     | ${4}  | ${5}          | ${"0コスト1枚 + リノセウス2枚"}
-        ${3}   | ${2}     | ${6}  | ${12}         | ${"0コスト2枚 + リノセウス3枚"}
-        ${1}   | ${3}     | ${2}  | ${4}          | ${"0コスト3枚 + リノセウス1枚"}
+        ${1}   | ${1}     | ${2}  | ${2}           | ${"0コスト1枚 + リノセウス1枚"}
+        ${2}   | ${1}     | ${4}  | ${5}           | ${"0コスト1枚 + リノセウス2枚"}
+        ${3}   | ${2}     | ${6}  | ${12}          | ${"0コスト2枚 + リノセウス3枚"}
+        ${1}   | ${3}     | ${2}  | ${4}           | ${"0コスト3枚 + リノセウス1枚"}
       `("$description", ({ rhinos, zeroCost, maxPP, expectedDamage }) => {
         const cards: CardCounts = {
           rhinoceroach: rhinos,
@@ -206,34 +206,36 @@ describe("calculateOptimalPlay", () => {
 
     describe("バウンスを含む複雑なケース", () => {
       test.each`
-        rhinos | zeroCost | oneBounce | maxPP | expectedMinDamage | description
-        ${1}   | ${1}     | ${1}     | ${3}  | ${3}             | ${"バウンス基本形"}
-        ${2}   | ${1}     | ${1}     | ${5}  | ${8}             | ${"リノセウス2枚でバウンス"}
-        ${3}   | ${2}     | ${2}     | ${8}  | ${24}            | ${"ユーザー例: 最大効率"}
-        ${2}   | ${2}     | ${1}     | ${5}  | ${11}            | ${"PP制限あり"}
-      `("$description", ({ rhinos, zeroCost, oneBounce, maxPP, expectedMinDamage }) => {
+        rhinos | zeroCost | oneCost | twoCost | zeroBounce | oneBounce | maxPP | expectedDamage
+        ${1}   | ${1}     | ${0}    | ${0}    | ${0}       | ${1}      | ${3}  | ${3}
+        ${2}   | ${1}     | ${0}    | ${0}    | ${0}       | ${1}      | ${5}  | ${9}
+        ${3}   | ${2}     | ${0}    | ${0}    | ${0}       | ${2}      | ${8}  | ${24}
+        ${2}   | ${2}     | ${0}    | ${0}    | ${0}       | ${1}      | ${5}  | ${11}
+        ${3}   | ${1}     | ${0}    | ${0}    | ${0}       | ${1}      | ${7}  | ${15}
+        ${1}   | ${1}     | ${0}    | ${0}    | ${2}       | ${2}      | ${6}  | ${18}
+      `("%s", ({ rhinos, zeroCost, oneCost, twoCost, zeroBounce, oneBounce, maxPP, expectedDamage }) => {
         const cards: CardCounts = {
           rhinoceroach: rhinos,
           zeroCostCard: zeroCost,
-          oneCostCard: 0,
-          twoCostCard: 0,
-          zeroCostBounce: 0,
+          oneCostCard: oneCost,
+          twoCostCard: twoCost,
+          zeroCostBounce: zeroBounce,
           oneCostBounce: oneBounce,
         };
 
         const result = calculateOptimalPlay(cards, maxPP, 0);
-        expect(result.damage).toBeGreaterThanOrEqual(expectedMinDamage);
+        expect(result.damage).toBeGreaterThanOrEqual(expectedDamage);
         expect(result.ppUsed).toBeLessThanOrEqual(maxPP);
       });
     });
 
     describe("エッジケース", () => {
       test.each`
-        scenario                    | cards                                                                               | maxPP | currentPlayCount | expectedDamage
-        ${"カードなし"}              | ${{ rhinoceroach: 0, zeroCostCard: 0, oneCostCard: 0, twoCostCard: 0, zeroCostBounce: 0, oneCostBounce: 0 }} | ${10} | ${0}            | ${0}
-        ${"初期プレイ回数10"}        | ${{ rhinoceroach: 1, zeroCostCard: 0, oneCostCard: 0, twoCostCard: 0, zeroCostBounce: 0, oneCostBounce: 0 }} | ${2}  | ${10}           | ${11}
-        ${"高コストカードのみ"}      | ${{ rhinoceroach: 0, zeroCostCard: 0, oneCostCard: 0, twoCostCard: 2, zeroCostBounce: 0, oneCostBounce: 0 }} | ${4}  | ${0}            | ${0}
-        ${"バウンスのみ"}           | ${{ rhinoceroach: 0, zeroCostCard: 0, oneCostCard: 0, twoCostCard: 0, zeroCostBounce: 1, oneCostBounce: 1 }} | ${10} | ${0}            | ${0}
+        scenario                | cards                                                                                                        | maxPP | currentPlayCount | expectedDamage
+        ${"カードなし"}         | ${{ rhinoceroach: 0, zeroCostCard: 0, oneCostCard: 0, twoCostCard: 0, zeroCostBounce: 0, oneCostBounce: 0 }} | ${10} | ${0}             | ${0}
+        ${"初期プレイ回数10"}   | ${{ rhinoceroach: 1, zeroCostCard: 0, oneCostCard: 0, twoCostCard: 0, zeroCostBounce: 0, oneCostBounce: 0 }} | ${2}  | ${10}            | ${11}
+        ${"高コストカードのみ"} | ${{ rhinoceroach: 0, zeroCostCard: 0, oneCostCard: 0, twoCostCard: 2, zeroCostBounce: 0, oneCostBounce: 0 }} | ${4}  | ${0}             | ${0}
+        ${"バウンスのみ"}       | ${{ rhinoceroach: 0, zeroCostCard: 0, oneCostCard: 0, twoCostCard: 0, zeroCostBounce: 1, oneCostBounce: 1 }} | ${10} | ${0}             | ${0}
       `("$scenario", ({ cards, maxPP, currentPlayCount, expectedDamage }) => {
         const result = calculateOptimalPlay(cards, maxPP, currentPlayCount);
         expect(result.damage).toBe(expectedDamage);
@@ -260,13 +262,13 @@ describe("calculateOptimalPlay", () => {
         };
 
         const result = calculateOptimalPlay(cards, maxPP, 0);
-        
+
         // 基本的な不変条件をチェック
         expect(result.damage).toBeGreaterThanOrEqual(0);
         expect(result.ppUsed).toBeLessThanOrEqual(maxPP);
         expect(result.ppUsed).toBeGreaterThanOrEqual(0);
         expect(result.sequence.length).toBeGreaterThanOrEqual(0);
-        
+
         // PP使用量とシーケンス長の整合性
         if (result.damage > 0) {
           expect(result.sequence.length).toBeGreaterThan(0);
@@ -293,10 +295,10 @@ describe("calculateOptimalPlay", () => {
         const startTime = performance.now();
         const result = calculateOptimalPlay(cards, 6, 0); // PPも削減
         const endTime = performance.now();
-        
+
         // パフォーマンス要件 (1秒以内)
         expect(endTime - startTime).toBeLessThan(1000);
-        
+
         // 結果の妥当性
         expect(result.damage).toBeGreaterThanOrEqual(0);
         expect(result.ppUsed).toBeLessThanOrEqual(6);
